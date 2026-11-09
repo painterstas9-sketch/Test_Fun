@@ -24,6 +24,7 @@
     <style>
         body { font-family: 'Roboto', sans-serif; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .group:hover .gallery-controls { opacity: 1; }
     </style>
 </head>
 <body class="bg-copartDark text-zinc-100 min-h-screen flex flex-col">
@@ -36,7 +37,7 @@
                 <span class="text-sm font-mono text-zinc-400">GLOBAL VIRTUAL AUCTION</span>
             </div>
             <div class="flex items-center space-x-4 text-sm">
-                <span class="text-zinc-400 font-mono">Лотов онлайн: <strong class="text-yellow-500">0</strong></span>
+                <span class="text-zinc-400 font-mono">Лотов онлайн: <strong id="onlineCount" class="text-yellow-500">1</strong></span>
                 <button onclick="openAuthModal()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-1.5 rounded transition">Войти / Регистрация</button>
             </div>
         </div>
@@ -128,15 +129,117 @@
     </div>
 
     <script>
-        const lots = [];
+        // Массив лотов с новой структурой папок и 11 фотографиями
+        const lots = [
+            {
+                id: 20244781,
+                title: "2024 Renault Duster (Бензин, База)",
+                damage: "Под восстановление",
+                location: "Европа",
+                odometer: "1,200 км",
+                currentBid: "€14,200",
+                images: [
+                    "Cars/Duster 2024 GAS/Pictures/1.png",
+                    "Cars/Duster 2024 GAS/Pictures/2.png",
+                    "Cars/Duster 2024 GAS/Pictures/3.png",
+                    "Cars/Duster 2024 GAS/Pictures/4.png",
+                    "Cars/Duster 2024 GAS/Pictures/5.png",
+                    "Cars/Duster 2024 GAS/Pictures/6.png",
+                    "Cars/Duster 2024 GAS/Pictures/7.png",
+                    "Cars/Duster 2024 GAS/Pictures/8.png",
+                    "Cars/Duster 2024 GAS/Pictures/9.png",
+                    "Cars/Duster 2024 GAS/Pictures/10.png",
+                    "Cars/Duster 2024 GAS/Pictures/11.png"
+                ],
+                currentIndex: 0
+            }
+        ];
 
         function renderLots(items) {
             const grid = document.getElementById('lotsGrid');
             grid.innerHTML = '';
+            
+            document.getElementById('onlineCount').innerText = items.length;
+
             if (items.length === 0) {
                 grid.innerHTML = `<div class="col-span-full py-20 text-center text-zinc-500 font-mono">Активных лотов на аукционе в данный момент нет.</div>`;
                 return;
             }
+
+            items.forEach(lot => {
+                const card = document.createElement('div');
+                card.className = "bg-copartCard border border-zinc-800 rounded-lg overflow-hidden hover:border-zinc-600 transition flex flex-col justify-between group";
+                
+                card.innerHTML = `
+                    <div>
+                        <!-- Галерея фото (11 штук с каруселью) -->
+                        <div class="relative h-48 bg-zinc-900 overflow-hidden">
+                            <img id="lot-img-${lot.id}" src="${lot.images[lot.currentIndex]}" class="w-full h-full object-cover transition duration-300" alt="${lot.title}">
+                            
+                            <!-- Номер лота и регион -->
+                            <div class="absolute top-2 left-2 bg-black/80 px-2.5 py-1 rounded text-xs font-mono text-yellow-500 font-bold z-10 pointer-events-none">
+                                Лот №: ${lot.id}
+                            </div>
+                            <div class="absolute top-2 right-2 bg-zinc-800/90 text-zinc-200 px-2.5 py-1 rounded text-xs font-bold font-mono z-10 pointer-events-none">
+                                ${lot.location}
+                            </div>
+
+                            <!-- Индикатор количества фото (1 / 11) -->
+                            <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[11px] font-mono text-zinc-300 z-10 pointer-events-none">
+                                <span id="lot-counter-${lot.id}">${lot.currentIndex + 1}</span> / ${lot.images.length}
+                            </div>
+
+                            <!-- Кнопки переключения (видны при наведении) -->
+                            <div class="gallery-controls opacity-0 transition-opacity duration-200 absolute inset-0 flex items-center justify-between px-2 pointer-events-none">
+                                <button onclick="event.stopPropagation(); changeImage(${lot.id}, -1)" class="pointer-events-auto bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">
+                                    ❮
+                                </button>
+                                <button onclick="event.stopPropagation(); changeImage(${lot.id}, 1)" class="pointer-events-auto bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">
+                                    ❯
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Описание лота -->
+                        <div class="p-4">
+                            <h3 class="font-bold text-base mb-2 text-white">${lot.title}</h3>
+                            <div class="space-y-1 text-xs text-zinc-400 font-mono">
+                                <div>Степень повреждений: <span class="text-zinc-200">${lot.damage}</span></div>
+                                <div>Пробег: <span class="text-zinc-200">${lot.odometer}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопка ставки (ничего не вызывает) -->
+                    <div class="p-4 bg-zinc-900/50 border-t border-zinc-800 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-zinc-500 uppercase block font-mono">Текущая цена</span>
+                            <span class="text-lg font-bold font-mono text-yellow-500">${lot.currentBid}</span>
+                        </div>
+                        <button onclick="" class="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded text-xs font-bold transition">
+                            Сделать ставку
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Функция листания фотографий в карточке
+        function changeImage(lotId, direction) {
+            const lot = lots.find(l => l.id === lotId);
+            if (!lot) return;
+
+            lot.currentIndex += direction;
+
+            if (lot.currentIndex < 0) {
+                lot.currentIndex = lot.images.length - 1;
+            } else if (lot.currentIndex >= lot.images.length) {
+                lot.currentIndex = 0;
+            }
+
+            document.getElementById(`lot-img-${lotId}`).src = lot.images[lot.currentIndex];
+            document.getElementById(`lot-counter-${lotId}`).innerText = lot.currentIndex + 1;
         }
 
         function filterLots() {
@@ -186,6 +289,7 @@
             document.getElementById('lotModal').classList.add('hidden');
         }
 
+        // Первичная отрисовка лотов при загрузке страницы
         renderLots(lots);
     </script>
 </body>
