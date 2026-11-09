@@ -1,1 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лот #20244781 // COPART GLOBAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        copartDark: '#121619',
+                        copartCard: '#1a2026',
+                        copartYellow: '#f59e0b',
+                        copartRed: '#dc2626'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-copartDark text-zinc-100 min-h-screen flex flex-col">
 
+    <!-- TOP BAR -->
+    <header class="bg-black border-b border-zinc-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="bg-yellow-500 text-black font-black px-3 py-1 rounded text-lg tracking-tighter">COPART</div>
+                <span class="text-sm font-mono text-zinc-400">GLOBAL VIRTUAL AUCTION</span>
+            </div>
+            <div class="flex items-center space-x-4 text-sm">
+                <span class="text-zinc-400 font-mono">Терминал лота: <strong class="text-yellow-500">#20244781</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- LOT DETAILS MAIN -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+        <!-- Кнопка назад -->
+        <a href="index.html" class="mb-6 inline-flex items-center gap-2 text-xs font-mono bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-2 rounded transition">
+            ← Вернуться к результатам поиска
+        </a>
+
+        <!-- Шапка лота -->
+        <div class="bg-copartCard border border-zinc-800 rounded-lg p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-zinc-800 pb-4 mb-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-1">
+                        <span class="bg-yellow-500 text-black font-black px-2.5 py-0.5 rounded text-xs font-mono">ЛОТ #20244781</span>
+                        <span class="text-xs font-mono text-zinc-400">VIN: <strong class="text-zinc-200">VF1HJD2026S894102</strong></span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white">2024 Renault Duster (Бензин, База)</h1>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-zinc-400 block font-mono uppercase">Текущая ставка торгов</span>
+                    <span class="text-3xl font-bold font-mono text-yellow-500">€14,200</span>
+                </div>
+            </div>
+
+            <!-- Сетка: Галерея слева, Характеристики справа -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Галерея детального просмотра (11 фото) -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="relative h-80 sm:h-96 bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                        <img id="mainImage" src="Cars/Duster 2024 GAS/Pictures/1.png" class="w-full h-full object-cover" alt="Renault Duster">
+                        <div class="absolute bottom-3 right-3 bg-black/80 backdrop-blur-sm px-3 py-1 rounded text-xs font-mono text-zinc-300">
+                            Фото <span id="currentIndex">1</span> из 11
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-between px-3">
+                            <button onclick="changeImage(-1)" class="bg-black/60 hover:bg-black/90 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow transition">❮</button>
+                            <button onclick="changeImage(1)" class="bg-black/60 hover:bg-black/90 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow transition">❯</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Ряд миниатюр -->
+                    <div class="grid grid-cols-6 gap-2 overflow-x-auto pb-2" id="thumbnailsGrid">
+                        <!-- Заполнится скриптом -->
+                    </div>
+                </div>
+
+                <!-- Блок информации и ставок -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-zinc-900/80 border border-zinc-800 rounded-lg p-5 space-y-4">
+                        <h3 class="font-bold text-sm text-yellow-500 uppercase tracking-wider font-mono border-b border-zinc-800 pb-2">Сведения о лоте</h3>
+                        <div class="space-y-2 text-xs font-mono">
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Основное повреждение:</span> <strong class="text-red-400">Под восстановление</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Вторичное повреждение:</span> <strong class="text-zinc-300">Удар в заднюю часть / Кузов</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Пробег:</span> <strong class="text-zinc-200">1,200 км (Actual)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Двигатель:</span> <strong class="text-zinc-200">Бензиновый (Базовая комплектация)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Трансмиссия:</span> <strong class="text-zinc-200">Механическая</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Привод:</span> <strong class="text-zinc-200">Передний (4x2)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Цвет кузова:</span> <strong class="text-zinc-200">Белый (Glacier White)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Ключи:</span> <strong class="text-zinc-200">В наличии (1 шт.)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Тип документа:</span> <strong class="text-green-400">ПТС / Свидетельство ЕС</strong></div>
+                            <div class="flex justify-between py-1 border-b border-zinc-800/50"><span>Оценочная стоимость:</span> <strong class="text-zinc-200">€18,500</strong></div>
+                            <div class="flex justify-between py-1"><span>Локация площадки:</span> <strong class="text-yellow-500">Европа (Порт / Скандинавия)</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Терминал ставок -->
+                    <div class="bg-zinc-900/80 border border-zinc-800 rounded-lg p-5 space-y-4">
+                        <h3 class="font-bold text-sm text-yellow-500 uppercase tracking-wider font-mono border-b border-zinc-800 pb-2">Сделать максимальную ставку</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-mono text-zinc-400 mb-1">Ваша ставка (Минимум €14,300):</label>
+                                <input type="number" id="bidInput" placeholder="Введите сумму в евро (€)..." class="bg-zinc-950 border border-zinc-700 rounded px-3 py-2.5 text-sm text-white w-full focus:outline-none focus:border-yellow-500 font-mono">
+                            </div>
+                            <button onclick="placeBid()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded text-sm font-bold transition shadow-lg">
+                                Подтвердить ставку на аукционе
+                            </button>
+                            <p class="text-[11px] text-zinc-500 text-center font-mono">Нажимая кнопку, вы подтверждаете правила участия в торгах Copart Global.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const images = [
+            "Cars/Duster 2024 GAS/Pictures/1.png",
+            "Cars/Duster 2024 GAS/Pictures/2.png",
+            "Cars/Duster 2024 GAS/Pictures/3.png",
+            "Cars/Duster 2024 GAS/Pictures/4.png",
+            "Cars/Duster 2024 GAS/Pictures/5.png",
+            "Cars/Duster 2024 GAS/Pictures/6.png",
+            "Cars/Duster 2024 GAS/Pictures/7.png",
+            "Cars/Duster 2024 GAS/Pictures/8.png",
+            "Cars/Duster 2024 GAS/Pictures/9.png",
+            "Cars/Duster 2024 GAS/Pictures/10.png",
+            "Cars/Duster 2024 GAS/Pictures/11.png"
+        ];
+        let currentIndex = 0;
+
+        const mainImage = document.getElementById('mainImage');
+        const currentIndexSpan = document.getElementById('currentIndex');
+        const thumbnailsGrid = document.getElementById('thumbnailsGrid');
+
+        function renderThumbnails() {
+            thumbnailsGrid.innerHTML = '';
+            images.forEach((imgSrc, idx) => {
+                const thumb = document.createElement('img');
+                thumb.src = imgSrc;
+                thumb.className = `h-16 w-full object-cover rounded cursor-pointer border-2 transition ${idx === currentIndex ? 'border-yellow-500' : 'border-transparent opacity-60 hover:opacity-100'}`;
+                thumb.onclick = () => {
+                    currentIndex = idx;
+                    updateGallery();
+                };
+                thumbnailsGrid.appendChild(thumb);
+            });
+        }
+
+        function updateGallery() {
+            mainImage.src = images[currentIndex];
+            currentIndexSpan.innerText = currentIndex + 1;
+            renderThumbnails();
+        }
+
+        function changeImage(direction) {
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = images.length - 1;
+            if (currentIndex >= images.length) currentIndex = 0;
+            updateGallery();
+        }
+
+        function placeBid() {
+            const val = document.getElementById('bidInput').value;
+            if(!val || val <= 14200) {
+                alert('Ошибка: Ставка должна превышать текущую цену (€14,200)!');
+            } else {
+                alert(`Успешно! Ваша ставка в размере €${val} принята в систему торгов.`);
+            }
+        }
+
+        renderThumbnails();
+    </script>
+</body>
+</html>
