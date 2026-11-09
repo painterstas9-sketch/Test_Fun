@@ -50,9 +50,11 @@
                 <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse"></span> Поиск по каталогу аукциона
             </h1>
             
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+            <!-- Сетка из 6 элементов в ряд (включая новый фильтр типа лота) -->
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
                 <input type="text" id="searchInput" placeholder="Марка, модель или № лота..." class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                 
+                <!-- Степень повреждений -->
                 <select id="damageFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                     <option value="all">Все степени повреждений</option>
                     <option value="Новое / Без повреждений">Новое / Без повреждений</option>
@@ -62,6 +64,7 @@
                     <option value="Тотал / Разрушен">Тотал / Разрушен</option>
                 </select>
 
+                <!-- Регионы -->
                 <select id="locationFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                     <option value="all">Все регионы</option>
                     <option value="Европа">Европа</option>
@@ -69,10 +72,19 @@
                     <option value="Азия">Азия</option>
                 </select>
 
+                <!-- Фильтр по типу лота -->
+                <select id="saleTypeFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
+                    <option value="all">Тип: Все</option>
+                    <option value="Аукцион">Аукцион</option>
+                    <option value="Прямая продажа">Прямая продажа</option>
+                </select>
+
+                <!-- Кнопка Найти -->
                 <button onclick="filterLots()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded px-4 py-2 text-sm transition shadow">
                     Найти
                 </button>
 
+                <!-- Кнопка Сбросить -->
                 <button onclick="resetFilters()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded px-4 py-2 text-sm font-medium transition">
                     Сбросить
                 </button>
@@ -122,7 +134,8 @@
                 damage: "Под восстановление",
                 location: "Европа",
                 odometer: "89,480 км",
-                currentBid: "€6,200", // Обновленная цена
+                currentBid: "€6,200",
+                saleType: "Аукцион",
                 pageUrl: "20244781.html",
                 images: [
                     "Cars/Duster 2024 GAS/Pictures/1.png",
@@ -156,19 +169,25 @@
                 card.className = "bg-copartCard border border-zinc-800 rounded-lg overflow-hidden hover:border-zinc-600 transition flex flex-col justify-between group cursor-pointer";
                 card.onclick = () => { window.location.href = lot.pageUrl; };
 
+                const badgeColor = lot.saleType === 'Аукцион' ? 'bg-yellow-500 text-black' : 'bg-emerald-600 text-white';
+
                 card.innerHTML = `
                     <div>
                         <div class="relative h-48 bg-zinc-900 overflow-hidden">
                             <img id="lot-img-${lot.id}" src="${lot.images[lot.currentIndex]}" class="w-full h-full object-cover transition duration-300" alt="${lot.title}">
+                            
                             <div class="absolute top-2 left-2 bg-black/80 px-2.5 py-1 rounded text-xs font-mono text-yellow-500 font-bold z-10 pointer-events-none">
                                 Лот №: ${lot.id}
                             </div>
-                            <div class="absolute top-2 right-2 bg-zinc-800/90 text-zinc-200 px-2.5 py-1 rounded text-xs font-bold font-mono z-10 pointer-events-none">
-                                ${lot.location}
+
+                            <div class="absolute top-2 right-2 ${badgeColor} px-2.5 py-1 rounded text-xs font-bold font-mono z-10 pointer-events-none shadow">
+                                ${lot.saleType}
                             </div>
+
                             <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[11px] font-mono text-zinc-300 z-10 pointer-events-none">
                                 <span id="lot-counter-${lot.id}">${lot.currentIndex + 1}</span> / ${lot.images.length}
                             </div>
+
                             <div class="gallery-controls opacity-0 transition-opacity duration-200 absolute inset-0 flex items-center justify-between px-2">
                                 <button onclick="event.stopPropagation(); changeImage(${lot.id}, -1)" class="bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">❮</button>
                                 <button onclick="event.stopPropagation(); changeImage(${lot.id}, 1)" class="bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">❯</button>
@@ -179,6 +198,7 @@
                             <div class="space-y-1 text-xs text-zinc-400 font-mono">
                                 <div>Степень повреждений: <span class="text-zinc-200">${lot.damage}</span></div>
                                 <div>Пробег: <span class="text-zinc-200">${lot.odometer}</span></div>
+                                <div>Локация: <span class="text-zinc-200">${lot.location}</span></div>
                             </div>
                         </div>
                     </div>
@@ -210,11 +230,15 @@
             const query = document.getElementById('searchInput').value.toLowerCase();
             const damage = document.getElementById('damageFilter').value;
             const location = document.getElementById('locationFilter').value;
+            const saleType = document.getElementById('saleTypeFilter').value;
+
             const filtered = lots.filter(lot => {
                 const matchesQuery = lot.title.toLowerCase().includes(query) || lot.id.toString().includes(query);
                 const matchesDamage = damage === 'all' || lot.damage === damage;
                 const matchesLocation = location === 'all' || lot.location === location;
-                return matchesQuery && matchesDamage && matchesLocation;
+                const matchesSaleType = saleType === 'all' || lot.saleType === saleType;
+                
+                return matchesQuery && matchesDamage && matchesLocation && matchesSaleType;
             });
             renderLots(filtered);
         }
@@ -223,6 +247,7 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('damageFilter').value = 'all';
             document.getElementById('locationFilter').value = 'all';
+            document.getElementById('saleTypeFilter').value = 'all';
             renderLots(lots);
         }
 
