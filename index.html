@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COPART GLOBAL // Virtual Auto Auction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        copartDark: '#121619',
+                        copartCard: '#1a2026',
+                        copartYellow: '#f59e0b',
+                        copartRed: '#dc2626'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-copartDark text-zinc-100 min-h-screen flex flex-col">
+
+    <!-- TOP BAR -->
+    <header class="bg-black border-b border-zinc-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-yellow-500 text-black font-black px-3 py-1 rounded text-lg tracking-tighter">COPART</div>
+                <span class="text-sm font-mono text-zinc-400">GLOBAL VIRTUAL AUCTION</span>
+            </div>
+            <div class="flex items-center space-x-4 text-sm">
+                <span class="text-zinc-400 font-mono">Лотов онлайн: <strong class="text-yellow-500">0</strong></span>
+                <button class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-1.5 rounded transition">Войти / Регистрация</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SEARCH & FILTER PANEL -->
+    <section class="bg-copartCard border-b border-zinc-800 py-6">
+        <div class="max-w-7xl mx-auto px-4">
+            <h1 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse"></span> Поиск по каталогу аукциона
+            </h1>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input type="text" id="searchInput" oninput="filterLots()" placeholder="Марка, модель или № лота..." class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
+                <select id="damageFilter" onchange="filterLots()" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
+                    <option value="all">Все повреждения</option>
+                    <option value="Front End">Передняя часть</option>
+                    <option value="Rear">Задняя часть</option>
+                    <option value="None">Без повреждений (Целые)</option>
+                </select>
+                <select id="locationFilter" onchange="filterLots()" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
+                    <option value="all">Все площадки (США/Европа)</option>
+                    <option value="NJ - Newark">NJ - Newark (США)</option>
+                    <option value="TX - Houston">TX - Houston (США)</option>
+                    <option value="DE - Hamburg">DE - Hamburg (Германия)</option>
+                </select>
+                <button onclick="resetFilters()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded px-4 py-2 text-sm font-medium transition">Сбросить фильтры</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOTS TABLE / GRID -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+        <div id="lotsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Динамические карточки лотов -->
+        </div>
+    </main>
+
+    <!-- MODAL -->
+    <div id="lotModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
+        <div class="bg-copartCard border border-zinc-700 rounded-lg max-w-2xl w-full p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Список лотов пуст (очищен)
+        const lots = [];
+
+        function renderLots(items) {
+            const grid = document.getElementById('lotsGrid');
+            grid.innerHTML = '';
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-zinc-500 font-mono">Активных лотов на аукционе в данный момент нет.</div>`;
+                return;
+            }
+
+            items.forEach(lot => {
+                const card = document.createElement('div');
+                card.className = "bg-copartCard border border-zinc-800 rounded-lg overflow-hidden hover:border-zinc-600 transition flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-48 bg-zinc-900">
+                            <img src="${lot.img}" class="w-full h-full object-cover" alt="">
+                            <div class="absolute top-2 left-2 bg-black/80 px-2.5 py-1 rounded text-xs font-mono text-yellow-500 font-bold">
+                                Лот №: ${lot.id}
+                            </div>
+                            <div class="absolute top-2 right-2 bg-red-600 text-white px-2.5 py-1 rounded text-xs font-bold">
+                                ${lot.damage}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-base mb-2 text-white">${lot.title}</h3>
+                            <div class="space-y-1 text-xs text-zinc-400 font-mono">
+                                <div>Пробег: <span class="text-zinc-200">${lot.odometer}</span></div>
+                                <div>Площадка: <span class="text-zinc-200">${lot.location}</span></div>
+                                <div>Оценка рыночная: <span class="text-zinc-200">${lot.estValue}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-zinc-900/50 border-t border-zinc-800 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-zinc-500 uppercase block font-mono">Текущая ставка</span>
+                            <span class="text-lg font-bold font-mono text-yellow-500">${lot.currentBid}</span>
+                        </div>
+                        <button onclick="openModal(${lot.id})" class="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded text-xs font-bold transition">
+                            Сделать ставку
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterLots() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const damage = document.getElementById('damageFilter').value;
+            const location = document.getElementById('locationFilter').value;
+
+            const filtered = lots.filter(lot => {
+                const matchesQuery = lot.title.toLowerCase().includes(query) || lot.id.toString().includes(query);
+                const matchesDamage = damage === 'all' || lot.damage === damage;
+                const matchesLocation = location === 'all' || lot.location === location;
+                return matchesQuery && matchesDamage && matchesLocation;
+            });
+
+            renderLots(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('damageFilter').value = 'all';
+            document.getElementById('locationFilter').value = 'all';
+            renderLots(lots);
+        }
+
+        function openModal(id) {
+            const lot = lots.find(l => l.id === id);
+            if (!lot) return;
+            const modal = document.getElementById('lotModal');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-6">
+                    <img src="${lot.img}" class="w-full md:w-1/2 h-56 object-cover rounded" alt="">
+                    <div class="flex-grow">
+                        <span class="text-xs font-mono text-yellow-500">Лот #${lot.id}</span>
+                        <h2 class="text-xl font-bold text-white mb-2">${lot.title}</h2>
+                        <div class="space-y-1.5 text-xs text-zinc-300 font-mono mb-6">
+                            <div>Повреждение: <strong class="text-red-400">${lot.damage}</strong></div>
+                            <div>Пробег: <strong>${lot.odometer}</strong></div>
+                            <div>Локация: <strong>${lot.location}</strong></div>
+                            <div>Рыночная стоимость: <strong>${lot.estValue}</strong></div>
+                        </div>
+                        <div class="border-t border-zinc-700 pt-4">
+                            <div class="flex justify-between text-sm mb-2 font-mono">
+                                <span>Текущая ставка:</span>
+                                <strong class="text-yellow-500 text-lg">${lot.currentBid}</strong>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="number" placeholder="Ваша ставка..." class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white w-full focus:outline-none focus:border-yellow-500">
+                                <button onclick="alert('Ставка зарегистрирована в системе!'); closeModal();" class="bg-yellow-500 hover:bg-yellow-400 text-black px-5 py-2 rounded text-sm font-bold transition whitespace-nowrap">Подтвердить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
