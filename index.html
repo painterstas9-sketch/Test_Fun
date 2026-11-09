@@ -50,18 +50,25 @@
             </h1>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <input type="text" id="searchInput" oninput="filterLots()" placeholder="Марка, модель или № лота..." class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
+                
+                <!-- 5 степеней повреждений -->
                 <select id="damageFilter" onchange="filterLots()" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
-                    <option value="all">Все повреждения</option>
-                    <option value="Front End">Передняя часть</option>
-                    <option value="Rear">Задняя часть</option>
-                    <option value="None">Без повреждений (Целые)</option>
+                    <option value="all">Все степени повреждений</option>
+                    <option value="Новое / Без повреждений">Новое / Без повреждений</option>
+                    <option value="Медиум / Царапины">Медиум / Царапины</option>
+                    <option value="Тяжелые повреждения">Тяжелые повреждения</option>
+                    <option value="Под восстановление">Под восстановление</option>
+                    <option value="Тотал / Разрушен">Тотал / Разрушен</option>
                 </select>
+
+                <!-- Регионы: Европа, США, Азия -->
                 <select id="locationFilter" onchange="filterLots()" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
-                    <option value="all">Все площадки (США/Европа)</option>
-                    <option value="NJ - Newark">NJ - Newark (США)</option>
-                    <option value="TX - Houston">TX - Houston (США)</option>
-                    <option value="DE - Hamburg">DE - Hamburg (Германия)</option>
+                    <option value="all">Все регионы</option>
+                    <option value="Европа">Европа</option>
+                    <option value="США">США</option>
+                    <option value="Азия">Азия</option>
                 </select>
+
                 <button onclick="resetFilters()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded px-4 py-2 text-sm font-medium transition">Сбросить фильтры</button>
             </div>
         </div>
@@ -83,7 +90,6 @@
     </div>
 
     <script>
-        // Список лотов пуст (очищен)
         const lots = [];
 
         function renderLots(items) {
@@ -112,7 +118,7 @@
                             <h3 class="font-bold text-base mb-2 text-white">${lot.title}</h3>
                             <div class="space-y-1 text-xs text-zinc-400 font-mono">
                                 <div>Пробег: <span class="text-zinc-200">${lot.odometer}</span></div>
-                                <div>Площадка: <span class="text-zinc-200">${lot.location}</span></div>
+                                <div>Регион: <span class="text-zinc-200">${lot.location}</span></div>
                                 <div>Оценка рыночная: <span class="text-zinc-200">${lot.estValue}</span></div>
                             </div>
                         </div>
@@ -166,9 +172,9 @@
                         <span class="text-xs font-mono text-yellow-500">Лот #${lot.id}</span>
                         <h2 class="text-xl font-bold text-white mb-2">${lot.title}</h2>
                         <div class="space-y-1.5 text-xs text-zinc-300 font-mono mb-6">
-                            <div>Повреждение: <strong class="text-red-400">${lot.damage}</strong></div>
+                            <div>Степень повреждения: <strong class="text-red-400">${lot.damage}</strong></div>
                             <div>Пробег: <strong>${lot.odometer}</strong></div>
-                            <div>Локация: <strong>${lot.location}</strong></div>
+                            <div>Регион: <strong>${lot.location}</strong></div>
                             <div>Рыночная стоимость: <strong>${lot.estValue}</strong></div>
                         </div>
                         <div class="border-t border-zinc-700 pt-4">
@@ -189,3 +195,11 @@
         }
 
         function closeModal() {
+            document.getElementById('lotModal').classList.remove('flex');
+            document.getElementById('lotModal').classList.add('hidden');
+        }
+
+        renderLots(lots);
+    </script>
+</body>
+</html>
