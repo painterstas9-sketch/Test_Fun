@@ -32,7 +32,7 @@
     <!-- TOP BAR -->
     <header class="bg-black border-b border-zinc-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href='index.html'">
                 <div class="bg-yellow-500 text-black font-black px-3 py-1 rounded text-lg tracking-tighter">COPART</div>
                 <span class="text-sm font-mono text-zinc-400">GLOBAL VIRTUAL AUCTION</span>
             </div>
@@ -50,11 +50,9 @@
                 <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse"></span> Поиск по каталогу аукциона
             </h1>
             
-            <!-- Сетка из 5 элементов в ряд -->
             <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
                 <input type="text" id="searchInput" placeholder="Марка, модель или № лота..." class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                 
-                <!-- 5 степеней повреждений -->
                 <select id="damageFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                     <option value="all">Все степени повреждений</option>
                     <option value="Новое / Без повреждений">Новое / Без повреждений</option>
@@ -64,7 +62,6 @@
                     <option value="Тотал / Разрушен">Тотал / Разрушен</option>
                 </select>
 
-                <!-- Регионы: Европа, США, Азия -->
                 <select id="locationFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                     <option value="all">Все регионы</option>
                     <option value="Европа">Европа</option>
@@ -72,12 +69,10 @@
                     <option value="Азия">Азия</option>
                 </select>
 
-                <!-- Кнопка Найти -->
                 <button onclick="filterLots()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded px-4 py-2 text-sm transition shadow">
                     Найти
                 </button>
 
-                <!-- Кнопка Сбросить -->
                 <button onclick="resetFilters()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded px-4 py-2 text-sm font-medium transition">
                     Сбросить
                 </button>
@@ -91,14 +86,6 @@
             <!-- Динамические карточки лотов -->
         </div>
     </main>
-
-    <!-- MODAL FOR CARS -->
-    <div id="lotModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
-        <div class="bg-copartCard border border-zinc-700 rounded-lg max-w-2xl w-full p-6 relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
-            <div id="modalContent"></div>
-        </div>
-    </div>
 
     <!-- AUTH MODAL WITH ERROR -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
@@ -116,7 +103,6 @@
                     <input type="password" id="authPassword" placeholder="••••••••" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white w-full focus:outline-none focus:border-yellow-500">
                 </div>
 
-                <!-- Блок ошибки -->
                 <div id="authError" class="hidden bg-red-950/60 border border-red-600/60 rounded p-3 text-xs text-red-300 font-mono leading-relaxed">
                     <strong>⚠️ Ошибка 403:</strong> Доступ к терминалу торгов заблокирован. Требуется верификация брокерского аккаунта США/Европа.
                 </div>
@@ -129,7 +115,6 @@
     </div>
 
     <script>
-        // Массив лотов с новой структурой папок и 11 фотографиями
         const lots = [
             {
                 id: 20244781,
@@ -138,6 +123,7 @@
                 location: "Европа",
                 odometer: "1,200 км",
                 currentBid: "€14,200",
+                pageUrl: "20244781.html",
                 images: [
                     "Cars/Duster 2024 GAS/Pictures/1.png",
                     "Cars/Duster 2024 GAS/Pictures/2.png",
@@ -158,49 +144,36 @@
         function renderLots(items) {
             const grid = document.getElementById('lotsGrid');
             grid.innerHTML = '';
-            
             document.getElementById('onlineCount').innerText = items.length;
 
             if (items.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center text-zinc-500 font-mono">Активных лотов на аукционе в данный момент нет.</div>`;
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-zinc-500 font-mono">По вашему запросу лотов не найдено.</div>`;
                 return;
             }
 
             items.forEach(lot => {
                 const card = document.createElement('div');
-                card.className = "bg-copartCard border border-zinc-800 rounded-lg overflow-hidden hover:border-zinc-600 transition flex flex-col justify-between group";
-                
+                card.className = "bg-copartCard border border-zinc-800 rounded-lg overflow-hidden hover:border-zinc-600 transition flex flex-col justify-between group cursor-pointer";
+                card.onclick = () => { window.location.href = lot.pageUrl; };
+
                 card.innerHTML = `
                     <div>
-                        <!-- Галерея фото (11 штук с каруселью) -->
                         <div class="relative h-48 bg-zinc-900 overflow-hidden">
                             <img id="lot-img-${lot.id}" src="${lot.images[lot.currentIndex]}" class="w-full h-full object-cover transition duration-300" alt="${lot.title}">
-                            
-                            <!-- Номер лота и регион -->
                             <div class="absolute top-2 left-2 bg-black/80 px-2.5 py-1 rounded text-xs font-mono text-yellow-500 font-bold z-10 pointer-events-none">
                                 Лот №: ${lot.id}
                             </div>
                             <div class="absolute top-2 right-2 bg-zinc-800/90 text-zinc-200 px-2.5 py-1 rounded text-xs font-bold font-mono z-10 pointer-events-none">
                                 ${lot.location}
                             </div>
-
-                            <!-- Индикатор количества фото (1 / 11) -->
                             <div class="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[11px] font-mono text-zinc-300 z-10 pointer-events-none">
                                 <span id="lot-counter-${lot.id}">${lot.currentIndex + 1}</span> / ${lot.images.length}
                             </div>
-
-                            <!-- Кнопки переключения (видны при наведении) -->
-                            <div class="gallery-controls opacity-0 transition-opacity duration-200 absolute inset-0 flex items-center justify-between px-2 pointer-events-none">
-                                <button onclick="event.stopPropagation(); changeImage(${lot.id}, -1)" class="pointer-events-auto bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">
-                                    ❮
-                                </button>
-                                <button onclick="event.stopPropagation(); changeImage(${lot.id}, 1)" class="pointer-events-auto bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">
-                                    ❯
-                                </button>
+                            <div class="gallery-controls opacity-0 transition-opacity duration-200 absolute inset-0 flex items-center justify-between px-2">
+                                <button onclick="event.stopPropagation(); changeImage(${lot.id}, -1)" class="bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">❮</button>
+                                <button onclick="event.stopPropagation(); changeImage(${lot.id}, 1)" class="bg-black/60 hover:bg-black/90 text-white w-8 h-8 rounded-full flex items-center justify-center transition text-sm font-bold shadow">❯</button>
                             </div>
                         </div>
-
-                        <!-- Описание лота -->
                         <div class="p-4">
                             <h3 class="font-bold text-base mb-2 text-white">${lot.title}</h3>
                             <div class="space-y-1 text-xs text-zinc-400 font-mono">
@@ -209,35 +182,26 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Кнопка ставки (ничего не вызывает) -->
-                    <div class="p-4 bg-zinc-900/50 border-t border-zinc-800 flex items-center justify-between">
+                    <div class="p-4 bg-zinc-900/50 border-t border-zinc-800 flex items-center justify-between" onclick="event.stopPropagation()">
                         <div>
                             <span class="text-[10px] text-zinc-500 uppercase block font-mono">Текущая цена</span>
                             <span class="text-lg font-bold font-mono text-yellow-500">${lot.currentBid}</span>
                         </div>
-                        <button onclick="" class="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded text-xs font-bold transition">
+                        <a href="${lot.pageUrl}" class="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded text-xs font-bold transition">
                             Сделать ставку
-                        </button>
+                        </a>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // Функция листания фотографий в карточке
         function changeImage(lotId, direction) {
             const lot = lots.find(l => l.id === lotId);
             if (!lot) return;
-
             lot.currentIndex += direction;
-
-            if (lot.currentIndex < 0) {
-                lot.currentIndex = lot.images.length - 1;
-            } else if (lot.currentIndex >= lot.images.length) {
-                lot.currentIndex = 0;
-            }
-
+            if (lot.currentIndex < 0) lot.currentIndex = lot.images.length - 1;
+            if (lot.currentIndex >= lot.images.length) lot.currentIndex = 0;
             document.getElementById(`lot-img-${lotId}`).src = lot.images[lot.currentIndex];
             document.getElementById(`lot-counter-${lotId}`).innerText = lot.currentIndex + 1;
         }
@@ -246,14 +210,12 @@
             const query = document.getElementById('searchInput').value.toLowerCase();
             const damage = document.getElementById('damageFilter').value;
             const location = document.getElementById('locationFilter').value;
-
             const filtered = lots.filter(lot => {
                 const matchesQuery = lot.title.toLowerCase().includes(query) || lot.id.toString().includes(query);
                 const matchesDamage = damage === 'all' || lot.damage === damage;
                 const matchesLocation = location === 'all' || lot.location === location;
                 return matchesQuery && matchesDamage && matchesLocation;
             });
-
             renderLots(filtered);
         }
 
@@ -266,30 +228,18 @@
 
         function openAuthModal() {
             document.getElementById('authError').classList.add('hidden');
-            document.getElementById('authEmail').value = '';
-            document.getElementById('authPassword').value = '';
             const modal = document.getElementById('authModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
-
         function closeAuthModal() {
-            const modal = document.getElementById('authModal');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
+            document.getElementById('authModal').classList.remove('flex');
+            document.getElementById('authModal').classList.add('hidden');
         }
-
         function submitAuth() {
-            const errorBlock = document.getElementById('authError');
-            errorBlock.classList.remove('hidden');
+            document.getElementById('authError').classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('lotModal').classList.remove('flex');
-            document.getElementById('lotModal').classList.add('hidden');
-        }
-
-        // Первичная отрисовка лотов при загрузке страницы
         renderLots(lots);
     </script>
 </body>
