@@ -37,7 +37,7 @@
                 <span class="text-sm font-mono text-zinc-400">GLOBAL VIRTUAL AUCTION</span>
             </div>
             <div class="flex items-center space-x-4 text-sm">
-                <span class="text-zinc-400 font-mono">Лотов онлайн: <strong id="onlineCount" class="text-yellow-500">1</strong></span>
+                <span class="text-zinc-400 font-mono">Лотов онлайн: <strong id="onlineCount" class="text-yellow-500">2</strong></span>
                 <button onclick="openAuthModal()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-1.5 rounded transition">Войти / Регистрация</button>
             </div>
         </div>
@@ -50,11 +50,9 @@
                 <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse"></span> Поиск по каталогу аукциона
             </h1>
             
-            <!-- Сетка из 6 элементов в ряд (включая новый фильтр типа лота) -->
             <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
                 <input type="text" id="searchInput" placeholder="Марка, модель или № лота..." class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                 
-                <!-- Степень повреждений -->
                 <select id="damageFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                     <option value="all">Все степени повреждений</option>
                     <option value="Новое / Без повреждений">Новое / Без повреждений</option>
@@ -64,7 +62,6 @@
                     <option value="Тотал / Разрушен">Тотал / Разрушен</option>
                 </select>
 
-                <!-- Регионы -->
                 <select id="locationFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                     <option value="all">Все регионы</option>
                     <option value="Европа">Европа</option>
@@ -72,19 +69,16 @@
                     <option value="Азия">Азия</option>
                 </select>
 
-                <!-- Фильтр по типу лота -->
                 <select id="saleTypeFilter" class="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
                     <option value="all">Тип: Все</option>
                     <option value="Аукцион">Аукцион</option>
                     <option value="Прямая продажа">Прямая продажа</option>
                 </select>
 
-                <!-- Кнопка Найти -->
                 <button onclick="filterLots()" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded px-4 py-2 text-sm transition shadow">
                     Найти
                 </button>
 
-                <!-- Кнопка Сбросить -->
                 <button onclick="resetFilters()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded px-4 py-2 text-sm font-medium transition">
                     Сбросить
                 </button>
@@ -151,6 +145,27 @@
                     "Cars/Duster 2024 GAS/Pictures/11.png"
                 ],
                 currentIndex: 0
+            },
+            {
+                id: 48912035,
+                title: "2005 Lada VAZ-2110 (Седан, На ходу)",
+                damage: "Новое / Без повреждений",
+                location: "Европа",
+                odometer: "124,276 км",
+                currentBid: "€2,800",
+                saleType: "Прямая продажа",
+                pageUrl: "48912035.html",
+                images: [
+                    "VAZ2110/1.png",
+                    "VAZ2110/2.png",
+                    "VAZ2110/3.png",
+                    "VAZ2110/4.png",
+                    "VAZ2110/5.png",
+                    "VAZ2110/6.png",
+                    "VAZ2110/7.png",
+                    "VAZ2110/8.png"
+                ],
+                currentIndex: 0
             }
         ];
 
@@ -204,11 +219,11 @@
                     </div>
                     <div class="p-4 bg-zinc-900/50 border-t border-zinc-800 flex items-center justify-between" onclick="event.stopPropagation()">
                         <div>
-                            <span class="text-[10px] text-zinc-500 uppercase block font-mono">Текущая цена</span>
+                            <span class="text-[10px] text-zinc-500 uppercase block font-mono">Цена / Ставка</span>
                             <span class="text-lg font-bold font-mono text-yellow-500">${lot.currentBid}</span>
                         </div>
                         <a href="${lot.pageUrl}" class="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded text-xs font-bold transition">
-                            Сделать ставку
+                            Перейти к лоту
                         </a>
                     </div>
                 `;
